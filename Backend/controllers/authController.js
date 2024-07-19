@@ -159,7 +159,7 @@ const loginWithGoogle = async (req, res) => {
 
     res.status(200).json({ token, user });
   } catch (err) {
-    console.error("Server error:", err.message); // Log server error
+    console.error("Server error:", err.message);
     res.status(500).json({ msg: "Server error" });
   }
 };
