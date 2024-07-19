@@ -43,6 +43,8 @@ db.once("open", () => {
 
 const PatientRouter = require("./routes/PatientRoutes");
 app.use("/patient", PatientRouter);
+const authRouter = require("./routes/AuthRoutes");
+app.use("/auth", authRouter);
 
 const server = app.listen(process.env.PORT, () => {
   console.log(`listening on port ${process.env.PORT}`);
