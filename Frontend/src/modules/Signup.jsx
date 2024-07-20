@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CssVarsProvider, useColorScheme } from "@mui/joy/styles";
 import GlobalStyles from "@mui/joy/GlobalStyles";
 import CssBaseline from "@mui/joy/CssBaseline";
@@ -8,50 +9,34 @@ import Checkbox from "@mui/joy/Checkbox";
 import Divider from "@mui/joy/Divider";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
-import IconButton from "@mui/joy/IconButton";
 import Link from "@mui/joy/Link";
 import Input from "@mui/joy/Input";
 import Typography from "@mui/joy/Typography";
 import Stack from "@mui/joy/Stack";
-import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
-import "./Login.css";
 import { FaGoogle } from "react-icons/fa";
 import axiosRequest from "../utils/AxiosConfig";
-import { useNavigate } from "react-router-dom";
-import { UserData } from "../utils/UserData";
+// import "./SignUp.css";
 
-const Login = () => {
+const SignUp = () => {
   const [formData, setFormData] = useState({
+    username: "",
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState({});
-  const [rememberMe, setRememberMe] = useState(false);
   const [obscureText, setObscureText] = useState(true);
   const navigate = useNavigate();
-  const userData = UserData();
-
-  useEffect(() => {
-    if (userData) {
-      navigate("/");
-    }
-  }, [userData, navigate]);
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const onRememberMeChange = (e) => {
-    setRememberMe(e.target.checked);
-  };
-
-  const toggleObscureText = () => {
-    setObscureText((prev) => !prev);
-  };
-
   const validateForm = () => {
     const errors = {};
+    if (!formData.username) errors.username = "Username is required";
     if (!formData.email) errors.email = "Email is required";
     if (!formData.password) errors.password = "Password is required";
+    else if (formData.password.length < 8)
+      errors.password = "Password must be at least 8 characters long";
     return errors;
   };
 
@@ -63,50 +48,36 @@ const Login = () => {
       return;
     }
     try {
-      const res = await axiosRequest.post("/auth/login", formData);
-      const token = res.data.token;
-      if (rememberMe) {
-        localStorage.setItem("token", token);
-      } else {
-        sessionStorage.setItem("token", token);
-      }
-      console.log("success");
+      const res = await axiosRequest.post("/auth/signup", formData);
+      localStorage.setItem("token", res.data.token);
+      navigate("/success");
     } catch (err) {
-      console.error(err); // Log the entire error for debugging
-
-      // Check if err.response exists and has data property
-      if (err.response && err.response.data) {
-        console.error(err.response.data); // Log specific error message from the server
-        setErrors({
-          server: err.response.data.msg || "Login failed. Please try again.",
-        });
-      } else {
-        console.error(
-          "Network error or unexpected error occurred:",
-          err.message
-        ); // Log a generic message for network errors or unexpected errors
-        setErrors({
-          server: "Login failed. Please try again.",
-        });
-      }
+      console.error(err.response ? err.response.data : err.message);
+      setErrors({
+        server: err.response
+          ? err.response.data.msg || "Signup failed. Please try again."
+          : "Signup failed. Please try again.",
+      });
     }
   };
 
   const onGoogleSuccess = async (response) => {
     try {
       const tokenId = response.user.accessToken;
-      const res = await axiosRequest.post("/auth/loginwithgoogle", { tokenId });
+      const res = await axiosRequest.post("/auth/signupwithgoogle", {
+        tokenId,
+      });
       localStorage.setItem("token", res.data.token);
-      navigate("/");
+      navigate("/success");
     } catch (err) {
       console.error(
-        "Login error:",
+        "Signup error:",
         err.response ? err.response.data : err.message
       );
       setErrors({
         server: err.response
-          ? err.response.data.msg || "Login failed. Please try again."
-          : "Login failed. Please try again.",
+          ? err.response.data.msg || "Signup failed. Please try again."
+          : "Signup failed. Please try again.",
       });
     }
   };
@@ -114,9 +85,13 @@ const Login = () => {
   const onGoogleFailure = (err) => {
     setErrors({
       server: err.response
-        ? err.response.data.msg || "Google login failed. Please try again."
-        : "Google login failed. Please try again.",
+        ? err.response.data.msg || "Google signup failed. Please try again."
+        : "Google signup failed. Please try again.",
     });
+  };
+
+  const toggleObscureText = () => {
+    setObscureText((prev) => !prev);
   };
 
   return (
@@ -187,13 +162,25 @@ const Login = () => {
             <Stack gap={4} sx={{ mb: 2 }}>
               <Stack gap={1}>
                 <Typography component="h1" level="h3">
-                  Sign in
+                  Sign up
                 </Typography>
               </Stack>
             </Stack>
 
             <Stack gap={4} sx={{ mt: 2 }}>
               <form onSubmit={onSubmit}>
+                <FormControl required>
+                  <FormLabel>Username</FormLabel>
+                  <Input
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={onChange}
+                  />
+                  {errors.username && (
+                    <Typography color="error">{errors.username}</Typography>
+                  )}
+                </FormControl>
                 <FormControl required>
                   <FormLabel>Email</FormLabel>
                   <Input
@@ -219,26 +206,8 @@ const Login = () => {
                   )}
                 </FormControl>
                 <Stack gap={4} sx={{ mt: 2 }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Checkbox
-                      size="sm"
-                      checked={rememberMe}
-                      onChange={onRememberMeChange}
-                      name="persistent"
-                      label="Remember me"
-                    />
-                    <Link href="#replace-with-a-link" level="title-sm">
-                      Forgot your password?
-                    </Link>
-                  </Box>
-                  <Button type="submit" id="signin-button" fullWidth>
-                    Sign in
+                  <Button type="submit" id="signup-button" fullWidth>
+                    Sign up
                   </Button>
                 </Stack>
 
@@ -258,7 +227,7 @@ const Login = () => {
                   color="neutral"
                   fullWidth
                   onClick={() => {
-                    // Logic to handle Google sign-in
+                    // Logic to handle Google sign-up
                   }}
                 >
                   <span>
@@ -271,9 +240,9 @@ const Login = () => {
             <Stack gap={4} sx={{ mb: 2 }}>
               <Stack gap={1}>
                 <Typography level="body-sm">
-                  New to TradiCare?{" "}
-                  <Link href="/signup" level="title-sm">
-                    Sign up!
+                  Already have an account?{" "}
+                  <Link href="/login" level="title-sm">
+                    Sign in!
                   </Link>
                 </Typography>
               </Stack>
@@ -302,11 +271,11 @@ const Login = () => {
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           backgroundImage:
-            "url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjUyOXwwfDF8c2VhcmNofDJ8fGNvZmZlZSUyMGJlYW58ZW58MHx8fHwxNjg5Njg1MTE5fDA&ixlib=rb-4.0.3&q=80&w=1080)",
+            "url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjUyOXwwfDF8c2VhcmNofDJ8fGNvZmZlJUyMGJlYW58ZW58MHx8fHwxNjg5Njg1MTE5fDA&ixlib=rb-4.0.3&q=80&w=1080)",
         })}
       />
     </div>
   );
 };
 
-export default Login;
+export default SignUp;
