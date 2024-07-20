@@ -1,10 +1,11 @@
 import React from "react";
 import "./App.css";
+import Login from "./modules/Login";
 
 const App = () => {
   return (
     <div className="App">
-      <p>Hello World</p>
+      <Login />
     </div>
   );
 };
