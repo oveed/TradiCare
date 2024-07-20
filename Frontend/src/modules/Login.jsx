@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CssVarsProvider, useColorScheme } from "@mui/joy/styles";
 import GlobalStyles from "@mui/joy/GlobalStyles";
 import CssBaseline from "@mui/joy/CssBaseline";
@@ -16,8 +16,109 @@ import Stack from "@mui/joy/Stack";
 import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
 import "./Login.css";
 import { FaGoogle } from "react-icons/fa";
+import axiosRequest from "../utils/AxiosConfig";
+import { useNavigate } from "react-router-dom";
+import { UserData } from "../utils/UserData";
 
 const Login = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [rememberMe, setRememberMe] = useState(false);
+  const [obscureText, setObscureText] = useState(true);
+  const navigate = useNavigate();
+  const userData = UserData();
+
+  useEffect(() => {
+    if (userData) {
+      navigate("/events");
+    }
+  }, [userData, navigate]);
+
+  const onChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const onRememberMeChange = (e) => {
+    setRememberMe(e.target.checked);
+  };
+
+  const toggleObscureText = () => {
+    setObscureText((prev) => !prev);
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.email) errors.email = "Email is required";
+    if (!formData.password) errors.password = "Password is required";
+    return errors;
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+    try {
+      const res = await axiosRequest.post("/auth/login", formData);
+      const token = res.data.token;
+      if (rememberMe) {
+        localStorage.setItem("token", token);
+      } else {
+        sessionStorage.setItem("token", token);
+      }
+      console.log("success");
+    } catch (err) {
+      console.error(err); // Log the entire error for debugging
+
+      // Check if err.response exists and has data property
+      if (err.response && err.response.data) {
+        console.error(err.response.data); // Log specific error message from the server
+        setErrors({
+          server: err.response.data.msg || "Login failed. Please try again.",
+        });
+      } else {
+        console.error(
+          "Network error or unexpected error occurred:",
+          err.message
+        ); // Log a generic message for network errors or unexpected errors
+        setErrors({
+          server: "Login failed. Please try again.",
+        });
+      }
+    }
+  };
+
+  const onGoogleSuccess = async (response) => {
+    try {
+      const tokenId = response.user.accessToken;
+      const res = await axiosRequest.post("/auth/loginwithgoogle", { tokenId });
+      localStorage.setItem("token", res.data.token);
+      navigate("/events");
+    } catch (err) {
+      console.error(
+        "Login error:",
+        err.response ? err.response.data : err.message
+      );
+      setErrors({
+        server: err.response
+          ? err.response.data.msg || "Login failed. Please try again."
+          : "Login failed. Please try again.",
+      });
+    }
+  };
+
+  const onGoogleFailure = (err) => {
+    setErrors({
+      server: err.response
+        ? err.response.data.msg || "Google login failed. Please try again."
+        : "Google login failed. Please try again.",
+    });
+  };
+
   return (
     <div>
       <img src="../core/assets/logo.png" alt="logo" />
@@ -89,40 +190,33 @@ const Login = () => {
                   Sign in
                 </Typography>
               </Stack>
-              {/* <Button
-                class="MuiButton-root MuiButton-fullWidth MuiButton-variantSoft MuiButton-colorNeutral MuiButton-sizeMd css-15ww15x-JoyButton-root"
-                id="google-button"
-                variant="soft"
-                color="neutral"
-                fullWidth
-              >
-                <span>
-                  <GoogleIcon />
-                </span>
-                Continue with Google
-              </Button> */}
             </Stack>
 
             <Stack gap={4} sx={{ mt: 2 }}>
-              <form
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  const formElements = event.currentTarget.elements;
-                  const data = {
-                    email: formElements.email.value,
-                    password: formElements.password.value,
-                    persistent: formElements.persistent.checked,
-                  };
-                  alert(JSON.stringify(data, null, 2));
-                }}
-              >
+              <form onSubmit={onSubmit}>
                 <FormControl required>
                   <FormLabel>Email</FormLabel>
-                  <Input type="email" name="email" />
+                  <Input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={onChange}
+                  />
+                  {errors.email && (
+                    <Typography color="error">{errors.email}</Typography>
+                  )}
                 </FormControl>
                 <FormControl required>
                   <FormLabel>Password</FormLabel>
-                  <Input type="password" name="password" />
+                  <Input
+                    type={obscureText ? "password" : "text"}
+                    name="password"
+                    value={formData.password}
+                    onChange={onChange}
+                  />
+                  {errors.password && (
+                    <Typography color="error">{errors.password}</Typography>
+                  )}
                 </FormControl>
                 <Stack gap={4} sx={{ mt: 2 }}>
                   <Box
@@ -132,8 +226,14 @@ const Login = () => {
                       alignItems: "center",
                     }}
                   >
-                    <Checkbox size="sm" label="Remember me" name="persistent" />
-                    <Link level="title-sm" href="#replace-with-a-link">
+                    <Checkbox
+                      size="sm"
+                      checked={rememberMe}
+                      onChange={onRememberMeChange}
+                      name="persistent"
+                      label="Remember me"
+                    />
+                    <Link href="#replace-with-a-link" level="title-sm">
                       Forgot your password?
                     </Link>
                   </Box>
@@ -157,6 +257,9 @@ const Login = () => {
                   variant="soft"
                   color="neutral"
                   fullWidth
+                  onClick={() => {
+                    // Logic to handle Google sign-in
+                  }}
                 >
                   <span>
                     <FaGoogle />
@@ -174,18 +277,6 @@ const Login = () => {
                   </Link>
                 </Typography>
               </Stack>
-              {/* <Button
-                class="MuiButton-root MuiButton-fullWidth MuiButton-variantSoft MuiButton-colorNeutral MuiButton-sizeMd css-15ww15x-JoyButton-root"
-                id="google-button"
-                variant="soft"
-                color="neutral"
-                fullWidth
-              >
-                <span>
-                  <GoogleIcon />
-                </span>
-                Continue with Google
-              </Button> */}
             </Stack>
           </Box>
           <Box component="footer" sx={{ py: 3 }}>
@@ -211,7 +302,7 @@ const Login = () => {
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           backgroundImage:
-            "url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?auto=format&w=1000&dpr=2)",
+            "url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNjUyOXwwfDF8c2VhcmNofDJ8fGNvZmZlZSUyMGJlYW58ZW58MHx8fHwxNjg5Njg1MTE5fDA&ixlib=rb-4.0.3&q=80&w=1080)",
         })}
       />
     </div>
