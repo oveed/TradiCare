@@ -50,7 +50,7 @@ const SignUp = () => {
     try {
       const res = await axiosRequest.post("/auth/signup", formData);
       localStorage.setItem("token", res.data.token);
-      navigate("/success");
+      navigate("/messages");
     } catch (err) {
       console.error(err.response ? err.response.data : err.message);
       setErrors({

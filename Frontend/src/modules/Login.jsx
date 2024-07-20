@@ -71,6 +71,8 @@ const Login = () => {
         sessionStorage.setItem("token", token);
       }
       console.log("success");
+      localStorage.setItem("token", token);
+      navigate("/messages");
     } catch (err) {
       console.error(err); // Log the entire error for debugging
 
