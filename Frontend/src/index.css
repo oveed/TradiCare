@@ -1,3 +1,7 @@
 :root {
   --primary-color: #026fd0;
+  height: 100vh;
+}
+.App {
+  height: 100vh !important;
 }

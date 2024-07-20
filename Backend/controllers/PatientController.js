@@ -69,7 +69,7 @@ const deletePatient = async (req, res) => {
     res.status(200).json({
       status: "success",
       message: "Patient deleted",
-      participant: deletedPatient,
+      patient: deletedPatient,
     });
   } catch (error) {
     console.error(error);

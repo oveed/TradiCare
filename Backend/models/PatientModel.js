@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ParticipantSchema = mongoose.Schema(
+const PatientSchema = mongoose.Schema(
   {
     id: {
       type: Number,
@@ -40,6 +40,6 @@ const ParticipantSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Participant = mongoose.model("Patient", ParticipantSchema);
+const Patient = mongoose.model("Patient", PatientSchema);
 
-module.exports = Participant;
+module.exports = Patient;
