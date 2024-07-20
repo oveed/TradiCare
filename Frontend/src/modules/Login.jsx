@@ -13,14 +13,14 @@ import Link from "@mui/joy/Link";
 import Input from "@mui/joy/Input";
 import Typography from "@mui/joy/Typography";
 import Stack from "@mui/joy/Stack";
-import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
-import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
-import GoogleIcon from "../assets/googleIcon";
+import "./Login.css";
+import { FaGoogle } from "react-icons/fa";
 
 const Login = () => {
   return (
     <div>
+      <img src="../core/assets/logo.png" alt="logo" />
       <CssBaseline />
       <GlobalStyles
         styles={{
@@ -57,16 +57,9 @@ const Login = () => {
             sx={{
               py: 3,
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: "center",
             }}
-          >
-            <Box sx={{ gap: 2, display: "flex", alignItems: "center" }}>
-              <IconButton variant="soft" color="primary" size="sm">
-                <BadgeRoundedIcon />
-              </IconButton>
-              <Typography level="title-lg">Company logo</Typography>
-            </Box>
-          </Box>
+          ></Box>
           <Box
             component="main"
             sx={{
@@ -95,15 +88,10 @@ const Login = () => {
                 <Typography component="h1" level="h3">
                   Sign in
                 </Typography>
-                <Typography level="body-sm">
-                  New to company?{" "}
-                  <Link href="#replace-with-a-link" level="title-sm">
-                    Sign up!
-                  </Link>
-                </Typography>
               </Stack>
-              <Button
+              {/* <Button
                 class="MuiButton-root MuiButton-fullWidth MuiButton-variantSoft MuiButton-colorNeutral MuiButton-sizeMd css-15ww15x-JoyButton-root"
+                id="google-button"
                 variant="soft"
                 color="neutral"
                 fullWidth
@@ -112,17 +100,9 @@ const Login = () => {
                   <GoogleIcon />
                 </span>
                 Continue with Google
-              </Button>
+              </Button> */}
             </Stack>
-            <Divider
-              sx={(theme) => ({
-                [theme.getColorSchemeSelector("light")]: {
-                  color: { xs: "#FFF", md: "text.tertiary" },
-                },
-              })}
-            >
-              or
-            </Divider>
+
             <Stack gap={4} sx={{ mt: 2 }}>
               <form
                 onSubmit={(event) => {
@@ -157,11 +137,55 @@ const Login = () => {
                       Forgot your password?
                     </Link>
                   </Box>
-                  <Button type="submit" fullWidth>
+                  <Button type="submit" id="signin-button" fullWidth>
                     Sign in
                   </Button>
                 </Stack>
+
+                <Divider
+                  sx={(theme) => ({
+                    [theme.getColorSchemeSelector("light")]: {
+                      color: { xs: "#FFF", md: "text.tertiary" },
+                    },
+                  })}
+                >
+                  or
+                </Divider>
+                <Button
+                  class="MuiButton-root MuiButton-fullWidth MuiButton-variantSoft MuiButton-colorNeutral MuiButton-sizeMd css-15ww15x-JoyButton-root"
+                  id="google-button"
+                  variant="soft"
+                  color="neutral"
+                  fullWidth
+                >
+                  <span>
+                    <FaGoogle />
+                  </span>
+                  Continue with Google
+                </Button>
               </form>
+            </Stack>
+            <Stack gap={4} sx={{ mb: 2 }}>
+              <Stack gap={1}>
+                <Typography level="body-sm">
+                  New to TradiCare?{" "}
+                  <Link href="#replace-with-a-link" level="title-sm">
+                    Sign up!
+                  </Link>
+                </Typography>
+              </Stack>
+              {/* <Button
+                class="MuiButton-root MuiButton-fullWidth MuiButton-variantSoft MuiButton-colorNeutral MuiButton-sizeMd css-15ww15x-JoyButton-root"
+                id="google-button"
+                variant="soft"
+                color="neutral"
+                fullWidth
+              >
+                <span>
+                  <GoogleIcon />
+                </span>
+                Continue with Google
+              </Button> */}
             </Stack>
           </Box>
           <Box component="footer" sx={{ py: 3 }}>
