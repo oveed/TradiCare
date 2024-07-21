@@ -74,11 +74,10 @@ const Login = () => {
       localStorage.setItem("token", token);
       navigate("/messages");
     } catch (err) {
-      console.error(err); // Log the entire error for debugging
+      console.error(err);
 
-      // Check if err.response exists and has data property
       if (err.response && err.response.data) {
-        console.error(err.response.data); // Log specific error message from the server
+        console.error(err.response.data);
         setErrors({
           server: err.response.data.msg || "Login failed. Please try again.",
         });
@@ -123,7 +122,6 @@ const Login = () => {
 
   return (
     <div>
-      <img src="../core/assets/logo.png" alt="logo" />
       <CssBaseline />
       <GlobalStyles
         styles={{
@@ -162,7 +160,10 @@ const Login = () => {
               display: "flex",
               justifyContent: "center",
             }}
-          ></Box>
+          >
+            {" "}
+            <img src="/logo.png" alt="logo" id="logo" />
+          </Box>
           <Box
             component="main"
             sx={{

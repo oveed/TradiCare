@@ -16,3 +16,7 @@
   border-radius: 0px;
   background-color: var(--primary-color);
 }
+#logo {
+  width: 120px;
+  height: auto;
+}
