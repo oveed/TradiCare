@@ -32,7 +32,7 @@ export default function MessageInput({
           aria-label="Message"
           onChange={(e) => setTextAreaValue(e.target.value)}
           value={textAreaValue}
-          minRows={3}
+          minRows={1}
           maxRows={10}
           endDecorator={
             <Stack

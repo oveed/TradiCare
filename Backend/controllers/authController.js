@@ -35,7 +35,11 @@ const Register = async (req, res) => {
     newUser.password = await bcrypt.hash(password, salt);
 
     await newUser.save();
-    const payload = { id: newUser.id, username: newUser.username };
+    const payload = {
+      id: newUser.id,
+      username: newUser.username,
+      email: newUser.email,
+    };
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
       expiresIn: 3600,
     });

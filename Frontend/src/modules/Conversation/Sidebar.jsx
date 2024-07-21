@@ -20,6 +20,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import BrightnessAutoRoundedIcon from "@mui/icons-material/BrightnessAutoRounded";
 import "./Sidebar.css";
+import { UserData } from "../../utils/UserData";
+
 function Toggler({ defaultExpanded = false, renderToggle, children }) {
   const [open, setOpen] = useState(defaultExpanded);
   return (
@@ -42,6 +44,8 @@ function Toggler({ defaultExpanded = false, renderToggle, children }) {
 }
 
 export default function Sidebar() {
+  const userData = UserData();
+
   return (
     <Sheet
       className="Sidebar"
@@ -98,7 +102,7 @@ export default function Sidebar() {
         <IconButton variant="soft" color="primary" size="sm">
           <BrightnessAutoRoundedIcon />
         </IconButton>
-        <Typography level="title-lg">Acme Co.</Typography>
+        <Typography level="title-lg">Doc. {userData.username}</Typography>
       </Box>
       <Input
         size="sm"
@@ -173,9 +177,9 @@ export default function Sidebar() {
             alt=""
           />
           <Box>
-            <Typography fontWeight="lg">John Doe</Typography>
+            <Typography fontWeight="lg">Doctor {userData.username}</Typography>
             <Typography level="body-xs" sx={{ color: "text.tertiary" }}>
-              johndoe@example.com
+              {userData.email}
             </Typography>
           </Box>
         </Box>
@@ -184,6 +188,7 @@ export default function Sidebar() {
           variant="soft"
           fullWidth
           startDecorator={<LogoutRoundedIcon />}
+          onClick={console.log({ userData })}
         >
           Logout
         </Button>

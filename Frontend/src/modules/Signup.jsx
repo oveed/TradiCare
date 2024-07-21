@@ -96,7 +96,6 @@ const SignUp = () => {
 
   return (
     <div>
-      <img src="../core/assets/logo.png" alt="logo" />
       <CssBaseline />
       <GlobalStyles
         styles={{
@@ -135,7 +134,9 @@ const SignUp = () => {
               display: "flex",
               justifyContent: "center",
             }}
-          ></Box>
+          >
+            <img src="./logo.png" alt="logo" id="logo" />
+          </Box>
           <Box
             component="main"
             sx={{

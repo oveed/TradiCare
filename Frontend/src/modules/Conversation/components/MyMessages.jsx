@@ -25,28 +25,12 @@ export default function MyProfile() {
       {
         id: "1",
         sender: {
-          name: "John Doe",
+          name: "AI",
           avatar: "https://example.com/avatar.jpg",
           online: true,
         },
-        content: "Hello!",
+        content: "Hello! Please enter the text you'd like to translate.",
         timestamp: "10:00 AM",
-      },
-      {
-        id: "2",
-        sender: "You",
-        content: "Hi there!",
-        timestamp: "10:01 AM",
-      },
-      {
-        id: "3",
-        sender: {
-          name: "John Doe",
-          avatar: "https://example.com/avatar.jpg",
-          online: true,
-        },
-        content: "How are you?",
-        timestamp: "10:02 AM",
       },
     ],
   };
