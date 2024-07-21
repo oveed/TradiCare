@@ -211,7 +211,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   height: 40,
                   width: 40,
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Color(0xFF1D4056),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: const Icon(
